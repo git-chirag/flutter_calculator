@@ -15,6 +15,22 @@ class Calculator extends StatefulWidget {
 }
 
 class _CalculatorState extends State<Calculator> {
+  Widget calcbutton(String btntxt, Color btncolor, Color txtcolor) {
+    return Container(
+        child: ElevatedButton(
+            onPressed: () {
+              //TODO: Add function for button pressed
+            },
+            child: Text(
+              btntxt,
+              style: TextStyle(color: txtcolor, fontSize: 35),
+            ),
+            style: ButtonStyle(
+                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                    RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(18.0))))));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,9 +44,25 @@ class _CalculatorState extends State<Calculator> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            SingleChildScrollView(
-              scrollDirection: Axis.vertical,
-              child: Row(),
+            //display
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Padding(
+                    padding: EdgeInsets.all(10.0),
+                    child: Text(
+                      '0',
+                      textAlign: TextAlign.left,
+                      style: TextStyle(color: Colors.white, fontSize: 100),
+                    )),
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                //button functions
+                calcbutton('AC', Colors.grey, Colors.black)
+              ],
             )
           ],
         ),

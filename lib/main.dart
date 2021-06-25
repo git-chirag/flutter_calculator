@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:battery/battery.dart';
 
 void main() => runApp(Myapp());
 
@@ -23,6 +24,29 @@ class _CalculatorState extends State<Calculator> {
   int num1;
   int num2;
   String operation;
+  final battery = Battery();
+  int batterylevel = 100;
+  BatteryState state;
+
+  Future getBatteryLevel() async {
+    while (true) {
+      var currentLevel = await battery.batteryLevel;
+      setState(() {
+        batterylevel = currentLevel;
+      });
+      await Future.delayed(Duration(seconds: 5));
+    }
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getBatteryLevel();
+    battery.onBatteryStateChanged.listen((event) {
+      state = event;
+    });
+  }
 
   void btnClicked(String btntxt) {
     if (btntxt == 'AC') {
@@ -89,17 +113,47 @@ class _CalculatorState extends State<Calculator> {
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             //display
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Padding(
-                    padding: EdgeInsets.all(10.0),
-                    child: Text(
-                      '$display',
-                      textAlign: TextAlign.left,
-                      style: TextStyle(color: Colors.white, fontSize: 50),
-                    )),
-              ],
+            Expanded(
+              child: Stack(
+                children: [
+                  Positioned(
+                      top: 0,
+                      left: 17,
+                      child: Row(
+                        children: [
+                          Text('$batterylevel',
+                              style: TextStyle(color: Colors.white)),
+                          SizedBox(width: 10),
+                          state == BatteryState.charging
+                              ? Icon(
+                                  Icons.power,
+                                  color: Colors.white,
+                                )
+                              : Icon(
+                                  Icons.power_off,
+                                  color: Colors.white,
+                                )
+                        ],
+                      )),
+                  Positioned(
+                    right: 5,
+                    bottom: 5,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Padding(
+                            padding: EdgeInsets.all(10.0),
+                            child: Text(
+                              '$display',
+                              textAlign: TextAlign.left,
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 50),
+                            )),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,

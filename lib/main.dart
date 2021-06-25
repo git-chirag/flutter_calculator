@@ -5,7 +5,10 @@ void main() => runApp(Myapp());
 class Myapp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(debugShowCheckedModeBanner: false, home: Calculator());
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: Calculator(),
+    );
   }
 }
 
@@ -15,13 +18,55 @@ class Calculator extends StatefulWidget {
 }
 
 class _CalculatorState extends State<Calculator> {
+  String display = '';
+  String res;
+  int num1;
+  int num2;
+  String operation;
+
+  void btnClicked(String btntxt) {
+    if (btntxt == 'AC') {
+      display = '';
+      res = '';
+      num1 = 0;
+      num2 = 0;
+    } else if (btntxt == '%') {
+      num1 = int.parse(display);
+      display = (num1 / 100).toString();
+    } else if (btntxt == '+' ||
+        btntxt == '-' ||
+        btntxt == 'x' ||
+        btntxt == '/') {
+      num1 = int.parse(display);
+      operation = btntxt;
+      display = '';
+    } else if (btntxt == '=') {
+      num2 = int.parse(display);
+      if (operation == '+') {
+        display = (num1 + num2).toString();
+      }
+      if (operation == '-') {
+        display = (num1 - num2).toString();
+      }
+      if (operation == 'x') {
+        display = (num1 * num2).toString();
+      }
+      if (operation == '/') {
+        display = (num1 ~/ num2).toString();
+      }
+    } else {
+      display = int.parse(display + btntxt).toString();
+    }
+    setState(() {
+      display = display;
+    });
+  }
+
   Widget calcbutton(String btntxt, Color btncolor, Color txtcolor) {
     return Container(
       //TODO: change RaisedButton to ElevatedButton
       child: RaisedButton(
-        onPressed: () {
-          //TODO: Add some functionality
-        },
+        onPressed: () => btnClicked(btntxt),
         child: Text(btntxt, style: TextStyle(color: txtcolor, fontSize: 35)),
         shape: CircleBorder(),
         color: btncolor,
@@ -39,7 +84,7 @@ class _CalculatorState extends State<Calculator> {
         backgroundColor: Colors.black,
       ),
       body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 5),
+        padding: EdgeInsets.fromLTRB(0, 5, 0, 10),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
@@ -50,9 +95,9 @@ class _CalculatorState extends State<Calculator> {
                 Padding(
                     padding: EdgeInsets.all(10.0),
                     child: Text(
-                      '0',
+                      '$display',
                       textAlign: TextAlign.left,
-                      style: TextStyle(color: Colors.white, fontSize: 100),
+                      style: TextStyle(color: Colors.white, fontSize: 50),
                     )),
               ],
             ),
@@ -111,9 +156,12 @@ class _CalculatorState extends State<Calculator> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
+                //0 button
                 RaisedButton(
                   padding: EdgeInsets.fromLTRB(34, 20, 128, 20),
-                  onPressed: () {},
+                  onPressed: () {
+                    btnClicked('0');
+                  },
                   shape: StadiumBorder(),
                   child: Text("0",
                       style: TextStyle(fontSize: 35, color: Colors.white)),
